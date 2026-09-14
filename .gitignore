@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# IDE 本地配置与缓存（含本地路径、数据库连接配置、schema 缓存，不上传）
+.idea/
+.vscode/
+
+# 爬取的第三方酒店图片（无代码引用，应用不依赖，不上传）
+spider/imgs/
+static/imgs/

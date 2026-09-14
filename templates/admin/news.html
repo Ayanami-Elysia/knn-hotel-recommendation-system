@@ -1,0 +1,73 @@
+﻿{# templates/admin/news.html #}
+{% extends "base.html" %}
+{% block title %}资讯管理{% endblock %}
+{% block content %}
+<h4>📰 资讯管理</h4>
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">+ 发布资讯</button>
+<button class="btn btn-outline-secondary mb-3" data-bs-toggle="modal" data-bs-target="#catModal">管理分类</button>
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>标题</th><th>分类</th><th>时间</th><th>操作</th></tr></thead>
+    <tbody>
+        {% for n in news %}
+        <tr>
+            <td>{{ n.id }}</td><td>{{ n.title }}</td><td>{{ n.category.name if n.category else '-' }}</td>
+            <td>{{ n.created_at.strftime('%Y-%m-%d') if n.created_at }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ n.id }}">编辑</button>
+                <form action="{{ url_for('admin.news_delete', nid=n.id) }}" method="post" class="d-inline" onsubmit="return confirm('确认删除?')"><button class="btn btn-sm btn-danger">删除</button></form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form action="{{ url_for('admin.news_add') }}" method="post" class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>发布资讯</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label>分类</label><select name="category_id" class="form-select">{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></div>
+            <div class="mb-3"><label>标题</label><input type="text" name="title" class="form-control" required></div>
+            <div class="mb-3"><label>内容</label><textarea name="content" class="form-control" rows="5"></textarea></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">发布</button></div>
+    </div></div>
+</form>
+{% for n in news %}
+<form action="{{ url_for('admin.news_edit', nid=n.id) }}" method="post" class="modal fade" id="editModal{{ n.id }}" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>编辑资讯</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label>分类</label><select name="category_id" class="form-select">{% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if n.category_id==c.id }}>{{ c.name }}</option>{% endfor %}</select></div>
+            <div class="mb-3"><label>标题</label><input type="text" name="title" class="form-control" value="{{ n.title }}"></div>
+            <div class="mb-3"><label>内容</label><textarea name="content" class="form-control" rows="5">{{ n.content or '' }}</textarea></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">保存</button></div>
+    </div></div>
+</form>
+{% endfor %}
+
+<div class="modal fade" id="catModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>管理资讯分类</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <form action="{{ url_for('admin.news_category_add') }}" method="post" class="row g-2 mb-3">
+                <div class="col-md-8"><input type="text" name="name" class="form-control" placeholder="新分类名称" required></div>
+                <div class="col-md-4"><button type="submit" class="btn btn-primary">添加</button></div>
+            </form>
+            <hr>
+            <ul class="list-group">
+                {% for c in categories %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ c.name }}
+                    <form action="{{ url_for('admin.news_category_delete', cid=c.id) }}" method="post" onsubmit="return confirm('删除分类将同时删除该分类下的所有资讯，确认?')">
+                        <button class="btn btn-sm btn-outline-danger">删除</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="list-group-item text-muted">暂无分类</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div></div>
+</div>
+{% endblock %}

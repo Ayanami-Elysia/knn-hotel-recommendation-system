@@ -1,0 +1,58 @@
+﻿{# templates/admin/attendance.html #}
+{% extends "base.html" %}
+{% block title %}考勤管理{% endblock %}
+{% block content %}
+<h4>📅 考勤管理</h4>
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">+ 录入考勤</button>
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>员工</th><th>日期</th><th>状态</th><th>操作</th></tr></thead>
+    <tbody>
+        {% for a in attendances %}
+        <tr>
+            <td>{{ a.id }}</td><td>{{ a.employee.real_name }}</td><td>{{ a.date }}</td>
+            <td>
+                {% if a.status == 'normal' %}<span class="badge bg-success">正常</span>
+                {% elif a.status == 'late' %}<span class="badge bg-warning">迟到</span>
+                {% elif a.status == 'early' %}<span class="badge bg-info">早退</span>
+                {% elif a.status == 'absent' %}<span class="badge bg-danger">缺勤</span>
+                {% endif %}
+            </td>
+            <td>
+                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ a.id }}">编辑</button>
+                <form action="{{ url_for('admin.attendance_delete', aid=a.id) }}" method="post" class="d-inline" onsubmit="return confirm('确认删除该考勤记录?')"><button class="btn btn-sm btn-danger">删除</button></form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form action="{{ url_for('admin.attendance_add') }}" method="post" class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>录入考勤</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label>员工</label><select name="employee_id" class="form-select">{% for e in employees %}<option value="{{ e.id }}">{{ e.real_name }}</option>{% endfor %}</select></div>
+            <div class="mb-3"><label>日期</label><input type="date" name="date" class="form-control" required></div>
+            <div class="mb-3"><label>状态</label><select name="status" class="form-select"><option value="normal">正常</option><option value="late">迟到</option><option value="early">早退</option><option value="absent">缺勤</option></select></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">保存</button></div>
+    </div></div>
+</form>
+
+{% for a in attendances %}
+<form action="{{ url_for('admin.attendance_edit', aid=a.id) }}" method="post" class="modal fade" id="editModal{{ a.id }}" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>编辑考勤 #{{ a.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <p><strong>{{ a.employee.real_name }}</strong> | {{ a.date }}</p>
+            <div class="mb-3"><label>状态</label><select name="status" class="form-select">
+                <option value="normal" {{ 'selected' if a.status=='normal' }}>正常</option>
+                <option value="late" {{ 'selected' if a.status=='late' }}>迟到</option>
+                <option value="early" {{ 'selected' if a.status=='early' }}>早退</option>
+                <option value="absent" {{ 'selected' if a.status=='absent' }}>缺勤</option>
+            </select></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">保存</button></div>
+    </div></div>
+</form>
+{% endfor %}
+{% endblock %}

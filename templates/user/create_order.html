@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% block title %}预订客房{% endblock %}
+{% block content %}
+<h4>📝 预订 - {{ room.hotel.name }} {{ room.room_type }}</h4>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <p><strong>价格:</strong> <span class="text-danger fw-bold">¥{{ room.price }}/晚</span></p>
+                <p><strong>房型:</strong> {{ room.room_type }} | {{ room.area }}m² | {{ room.bed_type }}</p>
+            </div>
+        </div>
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">入住人姓名</label>
+                <input type="text" name="guest_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">入住人手机号</label>
+                <input type="text" name="guest_phone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">入住日期</label>
+                <input type="date" name="check_in_date" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">离店日期</label>
+                <input type="date" name="check_out_date" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">提交预订</button>
+            <a href="{{ url_for('user.room_detail', room_id=room.id) }}" class="btn btn-secondary">返回</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

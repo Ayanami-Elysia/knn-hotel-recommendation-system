@@ -1,0 +1,45 @@
+﻿{% extends "base.html" %}
+{% block title %}管理后台{% endblock %}
+{% block content %}
+<h3>📊 管理仪表盘</h3>
+<div class="row mt-3">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body"><h5>{{ stats.user_count }}</h5><p>平台用户</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body"><h5>{{ stats.room_count }}</h5><p>客房总数</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body"><h5>{{ stats.order_count }}</h5><p>订单总数</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body"><h5>{{ stats.checkin_count }}</h5><p>入住人次</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="list-group mt-3">
+    <div class="list-group-item list-group-item-secondary fw-bold">管理菜单</div>
+    <a href="{{ url_for('admin.user_list') }}" class="list-group-item list-group-item-action">👥 用户管理</a>
+    <a href="{{ url_for('admin.employee_list') }}" class="list-group-item list-group-item-action">👷 员工管理</a>
+    <a href="{{ url_for('admin.hotel_list') }}" class="list-group-item list-group-item-action">🏨 酒店管理</a>
+    <a href="{{ url_for('admin.room_list_admin') }}" class="list-group-item list-group-item-action">🏠 客房管理</a>
+    <a href="{{ url_for('admin.order_list_admin') }}" class="list-group-item list-group-item-action">📋 订单管理</a>
+    <a href="{{ url_for('admin.checkin_list') }}" class="list-group-item list-group-item-action">🏁 到店管理</a>
+    <a href="{{ url_for('admin.deposit_list') }}" class="list-group-item list-group-item-action">💰 押金管理</a>
+    <a href="{{ url_for('admin.attendance_list') }}" class="list-group-item list-group-item-action">📅 考勤管理</a>
+    <a href="{{ url_for('admin.salary_list') }}" class="list-group-item list-group-item-action">💵 工资管理</a>
+    <a href="{{ url_for('admin.news_list') }}" class="list-group-item list-group-item-action">📰 资讯管理</a>
+    <a href="{{ url_for('admin.complaint_list') }}" class="list-group-item list-group-item-action">💬 投诉管理</a>
+    <a href="{{ url_for('admin.carousel_list') }}" class="list-group-item list-group-item-action">🖼️ 轮播图管理</a>
+    <a href="{{ url_for('admin.system_config') }}" class="list-group-item list-group-item-action">⚙️ 系统配置</a>
+    <a href="{{ url_for('admin.statistics') }}" class="list-group-item list-group-item-action">📈 营业统计</a>
+</div>
+{% endblock %}

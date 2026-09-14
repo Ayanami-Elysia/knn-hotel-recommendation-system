@@ -1,0 +1,9 @@
+﻿/* 自定义样式 */
+body { min-height: 100vh; display: flex; flex-direction: column; }
+.container { flex: 1; }
+.card { transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.breadcrumb { font-size: 0.9rem; }
+footer { margin-top: auto; }
+.table th { white-space: nowrap; }
+.badge { font-size: 0.8rem; }

@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+{% block title %}营业统计{% endblock %}
+{% block extra_css %}
+<style>.chart-box{width:100%;height:400px;margin-bottom:30px;}</style>
+{% endblock %}
+{% block content %}
+<h4>📈 营业数据统计</h4>
+<div class="row">
+    <div class="col-md-6"><div class="card"><div class="card-body"><h6>月度销售额 (最近6个月)</h6><div id="chart1" class="chart-box"></div></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><h6>客房销量分布</h6><div id="chart2" class="chart-box"></div></div></div></div>
+    <div class="col-md-12"><div class="card"><div class="card-body"><h6>各酒店营收对比</h6><div id="chart3" class="chart-box"></div></div></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.5.1/echarts.min.js"></script>
+<script>
+fetch('/admin/api/statistics')
+    .then(r => r.json())
+    .then(data => {
+        // 月度销售额
+        var c1 = echarts.init(document.getElementById('chart1'));
+        c1.setOption({
+            tooltip:{trigger:'axis'},
+            xAxis:{type:'category',data:data.months},
+            yAxis:{type:'value',name:'销售额(¥)'},
+            series:[{data:data.monthly_sales,type:'bar',itemStyle:{color:'#0d6efd'}}]
+        });
+
+        // 客房销量分布 (饼图)
+        var c2 = echarts.init(document.getElementById('chart2'));
+        c2.setOption({
+            tooltip:{trigger:'item'},
+            series:[{type:'pie',radius:'60%',data:data.room_types,
+                emphasis:{itemStyle:{shadowBlur:10,shadowOffsetX:0,shadowColor:'rgba(0,0,0,0.5)'}}}]
+        });
+
+        // 各酒店营收
+        var c3 = echarts.init(document.getElementById('chart3'));
+        c3.setOption({
+            tooltip:{trigger:'axis'},
+            xAxis:{type:'category',data:data.hotel_names,axisLabel:{rotate:15}},
+            yAxis:{type:'value',name:'营收(¥)'},
+            series:[{data:data.hotel_revenue,type:'bar',itemStyle:{color:'#198754'}}]
+        });
+    });
+</script>
+{% endblock %}

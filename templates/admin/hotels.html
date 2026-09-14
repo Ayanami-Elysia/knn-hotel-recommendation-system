@@ -1,0 +1,47 @@
+﻿{% extends "base.html" %}
+{% block title %}酒店管理{% endblock %}
+{% block content %}
+<h4>🏨 酒店管理</h4>
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">+ 新增酒店</button>
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>名称</th><th>地址</th><th>星级</th><th>操作</th></tr></thead>
+    <tbody>
+        {% for h in hotels %}
+        <tr>
+            <td>{{ h.id }}</td><td>{{ h.name }}</td><td>{{ h.address }}</td><td>⭐ {{ h.star }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ h.id }}">编辑</button>
+                <form action="{{ url_for('admin.hotel_delete', hid=h.id) }}" method="post" class="d-inline" onsubmit="return confirm('确认删除?')"><button class="btn btn-sm btn-danger">删除</button></form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form action="{{ url_for('admin.hotel_add') }}" method="post" class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>新增酒店</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label>名称</label><input type="text" name="name" class="form-control" required></div>
+            <div class="mb-3"><label>地址</label><input type="text" name="address" class="form-control"></div>
+            <div class="mb-3"><label>星级</label><input type="number" name="star" class="form-control" min="1" max="5"></div>
+            <div class="mb-3"><label>描述</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">保存</button></div>
+    </div></div>
+</form>
+{% for h in hotels %}
+<form action="{{ url_for('admin.hotel_edit', hid=h.id) }}" method="post" class="modal fade" id="editModal{{ h.id }}" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>编辑酒店</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label>名称</label><input type="text" name="name" class="form-control" value="{{ h.name }}"></div>
+            <div class="mb-3"><label>地址</label><input type="text" name="address" class="form-control" value="{{ h.address or '' }}"></div>
+            <div class="mb-3"><label>星级</label><input type="number" name="star" class="form-control" value="{{ h.star or '' }}" min="1" max="5"></div>
+            <div class="mb-3"><label>描述</label><textarea name="description" class="form-control" rows="3">{{ h.description or '' }}</textarea></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">保存</button></div>
+    </div></div>
+</form>
+{% endfor %}
+{% endblock %}

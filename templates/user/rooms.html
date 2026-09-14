@@ -1,0 +1,50 @@
+﻿{% extends "base.html" %}
+{% block title %}客房浏览{% endblock %}
+{% block content %}
+<h4>🔍 客房检索</h4>
+<form action="{{ url_for('user.room_list') }}" method="get" class="row g-3 mb-4">
+    <div class="col-md-8">
+        <input type="text" name="keyword" class="form-control" placeholder="输入酒店名称或地址搜索..." value="{{ keyword }}">
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary">搜索</button>
+        <a href="{{ url_for('user.room_list') }}" class="btn btn-outline-secondary">清空</a>
+    </div>
+</form>
+
+<div class="row">
+    {% for room in rooms %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <img src="{{ room.hotel.image or url_for('static', filename='images/default-hotel.svg') }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="">
+            <div class="card-body">
+                <h5>{{ room.hotel.name }}</h5>
+                <p class="text-muted small">{{ room.hotel.address }}</p>
+                <hr>
+                <p><strong>{{ room.room_type }}</strong> | {{ room.room_number }}</p>
+                <p class="text-danger fw-bold">¥{{ room.price }}/晚</p>
+                <p class="small">面积: {{ room.area }}m² | 床型: {{ room.bed_type }} | {{ room.floor }}F</p>
+                <p class="small">⭐ {{ room.rating }} | 早餐: {{ '含' if room.has_breakfast else '不含' }}</p>
+                <p class="small text-muted">{{ room.facilities }}</p>
+            </div>
+            <div class="card-footer bg-white">
+                <a href="{{ url_for('user.room_detail', room_id=room.id) }}" class="btn btn-sm btn-primary">查看详情</a>
+                {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+                <form action="{{ url_for('user.toggle_favorite', room_id=room.id) }}" method="post" class="d-inline">
+                    {% if room.id in fav_ids %}
+                    <button class="btn btn-sm btn-danger">♥ 已收藏</button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-danger">♥ 收藏</button>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5 text-muted">
+        <h5>暂无客房数据</h5>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

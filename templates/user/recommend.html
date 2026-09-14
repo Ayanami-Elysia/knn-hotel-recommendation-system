@@ -1,0 +1,58 @@
+﻿{% extends "base.html" %}
+{% block title %}KNN 推荐结果{% endblock %}
+{% block content %}
+<h4>🔍 KNN 个性化推荐结果</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        <h6>您的偏好:</h6>
+        <p class="text-muted small">
+            {% for k, v in preferences.items() %}
+            <span class="badge bg-secondary me-1">{{ k }}: {{ v }}</span>
+            {% endfor %}
+        </p>
+        <a href="{{ url_for('user.index') }}#recommend" class="btn btn-sm btn-outline-primary">修改偏好</a>
+    </div>
+</div>
+
+{% if rooms %}
+<div class="row">
+    {% for item in rooms %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-info">
+                <img src="{{ item.room.hotel.image or url_for('static', filename='images/default-hotel.svg') }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="">
+            <div class="card-header bg-info text-white">
+                相似度: {{ (item.similarity * 100) | round(1) }}%
+            </div>
+            <div class="card-body">
+                <h5>{{ item.room.hotel.name }}</h5>
+                <p>{{ item.room.room_type }} | {{ item.room.room_number }}</p>
+                <p class="text-danger fw-bold">¥{{ item.room.price }}/晚</p>
+                <p class="small">面积: {{ item.room.area }}m² | 床型: {{ item.room.bed_type }} | {{ item.room.floor }}F</p>
+                <p class="small">⭐ {{ item.room.rating }} | 早餐: {{ '含' if item.room.has_breakfast else '不含' }}</p>
+                <p class="small text-muted">{{ item.room.facilities }}</p>
+            </div>
+            <div class="card-footer bg-white">
+                <a href="{{ url_for('user.room_detail', room_id=item.room.id) }}" class="btn btn-sm btn-primary">查看详情</a>
+                <a href="{{ url_for('user.create_order', room_id=item.room.id) }}" class="btn btn-sm btn-success">预订</a>
+                {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+                <form action="{{ url_for('user.toggle_favorite', room_id=item.room.id) }}" method="post" class="d-inline">
+                    {% if item.room.id in fav_ids %}
+                    <button class="btn btn-sm btn-danger">♥ 已收藏</button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-danger">♥ 收藏</button>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <h5>暂无推荐结果</h5>
+    <p>请填写偏好条件后点击"开始推荐"</p>
+</div>
+{% endif %}
+{% endblock %}
+

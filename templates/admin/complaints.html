@@ -1,0 +1,36 @@
+﻿{% extends "base.html" %}
+{% block title %}投诉管理{% endblock %}
+{% block content %}
+<h4>💬 投诉留言管理</h4>
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>用户</th><th>内容</th><th>回复</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
+    <tbody>
+        {% for c in complaints %}
+        <tr>
+            <td>{{ c.id }}</td><td>{{ c.user.username }}</td><td>{{ c.content }}</td>
+            <td>{{ c.reply or '-' }}</td>
+            <td><span class="badge bg-{{ 'success' if c.status=='resolved' else 'warning' }}">{{ c.status }}</span></td>
+            <td>{{ c.created_at.strftime('%Y-%m-%d') if c.created_at }}</td>
+            <td>
+                {% if c.status == 'pending' %}
+                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ c.id }}">回复</button>
+                {% endif %}
+                <form action="{{ url_for('admin.complaint_delete', cid=c.id) }}" method="post" class="d-inline" onsubmit="return confirm('确认删除?')"><button class="btn btn-sm btn-danger">删除</button></form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% for c in complaints %}
+<form action="{{ url_for('admin.complaint_reply', cid=c.id) }}" method="post" class="modal fade" id="replyModal{{ c.id }}" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5>回复投诉 #{{ c.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <p class="text-muted">用户: {{ c.content }}</p>
+            <div class="mb-3"><label>回复内容</label><textarea name="reply" class="form-control" rows="4" required></textarea></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary">提交回复</button></div>
+    </div></div>
+</form>
+{% endfor %}
+{% endblock %}
